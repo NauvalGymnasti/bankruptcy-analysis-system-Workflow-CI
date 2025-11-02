@@ -24,7 +24,7 @@ jobs:
 
       - name: 🚀 Run MLflow project
         run: |
-          cd MLProject
+          cd MLPROJECT
           mlflow run . -P data_path=dataset/Company_Bankruptcy_Prediction_data.csv
 
       - name: 📤 Upload trained model artifact

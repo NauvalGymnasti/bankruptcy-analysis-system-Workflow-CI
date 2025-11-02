@@ -80,7 +80,11 @@ with mlflow.start_run(run_name="XGBoost_GridSearchCV_Best"):
 
     # Logging model ke MLflow (dengan input_example agar tidak ada warning)
     input_example = pd.DataFrame(X_train[:1], columns=X_train.columns)
-    mlflow.sklearn.log_model(best_model, name="best_model_tuned", input_example=input_example)
+    mlflow.sklearn.log_model(
+        sk_model=best_model,
+        artifact_path="best_model_tuned",
+        input_example=input_example
+    )
 
     # Simpan model lokal
     os.makedirs("model", exist_ok=True)

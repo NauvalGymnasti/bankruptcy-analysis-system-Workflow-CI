@@ -34,7 +34,7 @@ jobs:
           MLFLOW_HOME: ${{ github.workspace }}/MLProject
         run: |
           echo "Starting model retraining..."
-          python modelling.py
+          python modelling.py || { echo "🔥 Training failed"; cat mlflow.log; exit 1; }
       - name: 📤 Upload trained model artifact
         if: success()
         uses: actions/upload-artifact@v4

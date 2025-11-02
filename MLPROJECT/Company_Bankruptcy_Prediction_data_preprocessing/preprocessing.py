@@ -7,8 +7,6 @@ import seaborn as sns
 # Pra-pemrosesan & Model ML
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout
 from sklearn.preprocessing import RobustScaler
 from sklearn.impute import SimpleImputer
 

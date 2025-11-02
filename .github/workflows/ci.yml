@@ -29,7 +29,7 @@ jobs:
       # 4️⃣ Jalankan script training model
       - name: Run model training
         run: |
-          python Membangun_Model/modelling_tuning.py
+          python Membangun_Model/modelling_tunning.py
 
       # 5️⃣ Upload hasil MLflow logs ke artifact
       - name: Upload MLflow logs

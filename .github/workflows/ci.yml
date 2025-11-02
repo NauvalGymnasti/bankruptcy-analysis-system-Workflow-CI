@@ -23,7 +23,7 @@ jobs:
 
       - name: 📦 Install dependencies
         run: |
-          pip install mlflow==2.19.0 scikit-learn xgboost pandas numpy
+          pip install mlflow==2.19.0 scikit-learn xgboost pandas numpy seaborn matplotlib
 
       - name: 🧠 Verify MLflow version
         run: mlflow --version

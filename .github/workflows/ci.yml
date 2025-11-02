@@ -3,14 +3,14 @@ name: CI - Model Retraining
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:  
+  workflow_dispatch:
 
 jobs:
   retrain:
     runs-on: ubuntu-latest
     defaults:
       run:
-        shell: bash  
+        shell: bash
 
     steps:
       - name: 🧩 Checkout repository
@@ -19,7 +19,7 @@ jobs:
       - name: 🐍 Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"  
+          python-version: "3.10"
 
       - name: 📦 Install dependencies
         run: |
@@ -28,13 +28,15 @@ jobs:
       - name: 🧠 Verify MLflow version
         run: mlflow --version
 
-      - name: 🚀 Run MLflow project (no conda)
-        working-directory: MLPROJECT  
+      - name: 🚀 Run MLflow project (system environment)
+        working-directory: MLPROJECT
+        env:
+          MLFLOW_HOME: ${{ github.workspace }}/MLProject
         run: |
-          mlflow run . --no-conda -P data_path=dataset/Company_Bankruptcy_Prediction_data.csv
+          mlflow run . --env-manager=local -P data_path=dataset/Company_Bankruptcy_Prediction_data.csv
 
       - name: 📤 Upload trained model artifact
-        if: success() 
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: trained-model

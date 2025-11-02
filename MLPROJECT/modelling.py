@@ -62,8 +62,8 @@ mlflow.autolog(disable=True)
 print(f"Test Accuracy: {test_acc:.4f}")
 print("\nClassification Report:\n", classification_report(y_test, y_pred))
 
-# --- 8. Logging ke MLflow ---
 with mlflow.start_run(run_name="XGBoost_GridSearchCV_Best"):
+    # Pastikan variabel benar
     mlflow.log_params(best_params)
     mlflow.log_metric("cv_accuracy", best_score)
     mlflow.log_metric("test_accuracy", test_acc)
@@ -78,16 +78,23 @@ with mlflow.start_run(run_name="XGBoost_GridSearchCV_Best"):
     mlflow.log_artifact("results/classification_report.txt")
     mlflow.log_artifact("results/confusion_matrix.txt")
 
-    # Logging model ke MLflow (dengan input_example agar tidak ada warning)
-    input_example = pd.DataFrame(X_train[:1], columns=X_train.columns)
-    mlflow.sklearn.log_model(
-        sk_model=best_model,
+    # Logging model ke MLflow
+    if isinstance(X_train, pd.DataFrame):
+        input_example = X_train.iloc[:1]
+    else:
+        input_example = pd.DataFrame(X_train[:1])
+
+    mlflow.xgboost.log_model(
+        xgb_model=best_model,
         artifact_path="best_model_tuned",
         input_example=input_example
     )
 
     # Simpan model lokal
     os.makedirs("model", exist_ok=True)
-    best_model.save_model("model/xgb_best_model_tuned.json")
-
+    # pastikan best_model adalah estimator murni, bukan GridSearchCV object
+    if hasattr(best_model, "save_model"):
+        best_model.save_model("model/xgb_best_model_tuned.json")
+    elif hasattr(best_model, "best_estimator_"):
+        best_model.best_estimator_.save_model("model/xgb_best_model_tuned.json")
 print("\n✅ Model tuned telah disimpan dan dilog ke MLflow.")

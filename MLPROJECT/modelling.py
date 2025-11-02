@@ -5,7 +5,7 @@ import mlflow.sklearn
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from xgboost import XGBClassifier
-from preprocessing import load_and_preprocess_data
+from Company_Bankruptcy_Prediction_data_preprocessing.preprocessing import load_and_preprocess_data
 import pandas as pd
 
 # --- 1. Load Data ---

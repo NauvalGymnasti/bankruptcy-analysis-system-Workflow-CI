@@ -1,0 +1,15 @@
+artifact_uri: file:///home/runner/work/bankruptcy-analysis-system-Workflow-CI/bankruptcy-analysis-system-Workflow-CI/MLPROJECT/mlruns/853833082195711876/3593189ad2054f9b92fb2a6c9ad440f1/artifacts
+end_time: 1762100614759
+entry_point_name: ''
+experiment_id: '853833082195711876'
+lifecycle_stage: active
+run_id: 3593189ad2054f9b92fb2a6c9ad440f1
+run_name: XGBoost_GridSearchCV_Best
+run_uuid: 3593189ad2054f9b92fb2a6c9ad440f1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762100611823
+status: 3
+tags: []
+user_id: runner

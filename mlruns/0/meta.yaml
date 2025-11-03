@@ -1,0 +1,6 @@
+artifact_location: file:///home/runner/work/bankruptcy-analysis-system-Workflow-CI/bankruptcy-analysis-system-Workflow-CI/MLPROJECT/mlruns/853833082195711876
+creation_time: 1762100547315
+experiment_id: '853833082195711876'
+last_update_time: 1762100547315
+lifecycle_stage: active
+name: SMSML_XGBoost_Tuning

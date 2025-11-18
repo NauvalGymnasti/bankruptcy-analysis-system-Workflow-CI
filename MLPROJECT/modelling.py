@@ -12,7 +12,7 @@ import pandas as pd
 X_train, X_test, y_train, y_test = load_and_preprocess_data()
 
 # --- 2. Konfigurasi MLflow ---
-mlflow.set_tracking_uri("file:./mlruns")
+mlflow.set_tracking_uri("http://127.0.0.1:5000") 
 mlflow.set_experiment("SMSML_XGBoost_Tuning")
 
 # --- 3. Grid Search Parameter ---

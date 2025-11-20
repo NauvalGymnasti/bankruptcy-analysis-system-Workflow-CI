@@ -1,0 +1,122 @@
+artifact_path: mlflow-artifacts:/651417603852090839/models/m-0088d3e0194042109c045005a4ec076b/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.10.19
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.7.1
+is_signature_from_type_hint: false
+mlflow_version: 3.5.1
+model_id: m-0088d3e0194042109c045005a4ec076b
+model_size_bytes: 216801
+model_uuid: m-0088d3e0194042109c045005a4ec076b
+prompts: null
+run_id: 32631b4899c24f5f820143258b91e7e2
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "double", "name": " ROA(C) before interest and depreciation before
+    interest", "required": true}, {"type": "double", "name": " ROA(A) before interest
+    and % after tax", "required": true}, {"type": "double", "name": " ROA(B) before
+    interest and depreciation after tax", "required": true}, {"type": "double", "name":
+    " Operating Gross Margin", "required": true}, {"type": "double", "name": " Realized
+    Sales Gross Margin", "required": true}, {"type": "double", "name": " Operating
+    Profit Rate", "required": true}, {"type": "double", "name": " Pre-tax net Interest
+    Rate", "required": true}, {"type": "double", "name": " After-tax net Interest
+    Rate", "required": true}, {"type": "double", "name": " Non-industry income and
+    expenditure/revenue", "required": true}, {"type": "double", "name": " Continuous
+    interest rate (after tax)", "required": true}, {"type": "double", "name": " Operating
+    Expense Rate", "required": true}, {"type": "double", "name": " Research and development
+    expense rate", "required": true}, {"type": "double", "name": " Cash flow rate",
+    "required": true}, {"type": "double", "name": " Interest-bearing debt interest
+    rate", "required": true}, {"type": "double", "name": " Tax rate (A)", "required":
+    true}, {"type": "double", "name": " Net Value Per Share (B)", "required": true},
+    {"type": "double", "name": " Net Value Per Share (A)", "required": true}, {"type":
+    "double", "name": " Net Value Per Share (C)", "required": true}, {"type": "double",
+    "name": " Persistent EPS in the Last Four Seasons", "required": true}, {"type":
+    "double", "name": " Cash Flow Per Share", "required": true}, {"type": "double",
+    "name": " Revenue Per Share (Yuan \u00a5)", "required": true}, {"type": "double",
+    "name": " Operating Profit Per Share (Yuan \u00a5)", "required": true}, {"type":
+    "double", "name": " Per Share Net profit before tax (Yuan \u00a5)", "required":
+    true}, {"type": "double", "name": " Realized Sales Gross Profit Growth Rate",
+    "required": true}, {"type": "double", "name": " Operating Profit Growth Rate",
+    "required": true}, {"type": "double", "name": " After-tax Net Profit Growth Rate",
+    "required": true}, {"type": "double", "name": " Regular Net Profit Growth Rate",
+    "required": true}, {"type": "double", "name": " Continuous Net Profit Growth Rate",
+    "required": true}, {"type": "double", "name": " Total Asset Growth Rate", "required":
+    true}, {"type": "double", "name": " Net Value Growth Rate", "required": true},
+    {"type": "double", "name": " Total Asset Return Growth Rate Ratio", "required":
+    true}, {"type": "double", "name": " Cash Reinvestment %", "required": true}, {"type":
+    "double", "name": " Current Ratio", "required": true}, {"type": "double", "name":
+    " Quick Ratio", "required": true}, {"type": "double", "name": " Interest Expense
+    Ratio", "required": true}, {"type": "double", "name": " Total debt/Total net worth",
+    "required": true}, {"type": "double", "name": " Debt ratio %", "required": true},
+    {"type": "double", "name": " Net worth/Assets", "required": true}, {"type": "double",
+    "name": " Long-term fund suitability ratio (A)", "required": true}, {"type": "double",
+    "name": " Borrowing dependency", "required": true}, {"type": "double", "name":
+    " Contingent liabilities/Net worth", "required": true}, {"type": "double", "name":
+    " Operating profit/Paid-in capital", "required": true}, {"type": "double", "name":
+    " Net profit before tax/Paid-in capital", "required": true}, {"type": "double",
+    "name": " Inventory and accounts receivable/Net value", "required": true}, {"type":
+    "double", "name": " Total Asset Turnover", "required": true}, {"type": "double",
+    "name": " Accounts Receivable Turnover", "required": true}, {"type": "double",
+    "name": " Average Collection Days", "required": true}, {"type": "double", "name":
+    " Inventory Turnover Rate (times)", "required": true}, {"type": "double", "name":
+    " Fixed Assets Turnover Frequency", "required": true}, {"type": "double", "name":
+    " Net Worth Turnover Rate (times)", "required": true}, {"type": "double", "name":
+    " Revenue per person", "required": true}, {"type": "double", "name": " Operating
+    profit per person", "required": true}, {"type": "double", "name": " Allocation
+    rate per person", "required": true}, {"type": "double", "name": " Working Capital
+    to Total Assets", "required": true}, {"type": "double", "name": " Quick Assets/Total
+    Assets", "required": true}, {"type": "double", "name": " Current Assets/Total
+    Assets", "required": true}, {"type": "double", "name": " Cash/Total Assets", "required":
+    true}, {"type": "double", "name": " Quick Assets/Current Liability", "required":
+    true}, {"type": "double", "name": " Cash/Current Liability", "required": true},
+    {"type": "double", "name": " Current Liability to Assets", "required": true},
+    {"type": "double", "name": " Operating Funds to Liability", "required": true},
+    {"type": "double", "name": " Inventory/Working Capital", "required": true}, {"type":
+    "double", "name": " Inventory/Current Liability", "required": true}, {"type":
+    "double", "name": " Current Liabilities/Liability", "required": true}, {"type":
+    "double", "name": " Working Capital/Equity", "required": true}, {"type": "double",
+    "name": " Current Liabilities/Equity", "required": true}, {"type": "double", "name":
+    " Long-term Liability to Current Assets", "required": true}, {"type": "double",
+    "name": " Retained Earnings to Total Assets", "required": true}, {"type": "double",
+    "name": " Total income/Total expense", "required": true}, {"type": "double", "name":
+    " Total expense/Assets", "required": true}, {"type": "double", "name": " Current
+    Asset Turnover Rate", "required": true}, {"type": "double", "name": " Quick Asset
+    Turnover Rate", "required": true}, {"type": "double", "name": " Working capitcal
+    Turnover Rate", "required": true}, {"type": "double", "name": " Cash Turnover
+    Rate", "required": true}, {"type": "double", "name": " Cash Flow to Sales", "required":
+    true}, {"type": "double", "name": " Fixed Assets to Assets", "required": true},
+    {"type": "double", "name": " Current Liability to Liability", "required": true},
+    {"type": "double", "name": " Current Liability to Equity", "required": true},
+    {"type": "double", "name": " Equity to Long-term Liability", "required": true},
+    {"type": "double", "name": " Cash Flow to Total Assets", "required": true}, {"type":
+    "double", "name": " Cash Flow to Liability", "required": true}, {"type": "double",
+    "name": " CFO to Assets", "required": true}, {"type": "double", "name": " Cash
+    Flow to Equity", "required": true}, {"type": "double", "name": " Current Liability
+    to Current Assets", "required": true}, {"type": "double", "name": " Liability-Assets
+    Flag", "required": true}, {"type": "double", "name": " Net Income to Total Assets",
+    "required": true}, {"type": "double", "name": " Total assets to GNP price", "required":
+    true}, {"type": "double", "name": " No-credit Interval", "required": true}, {"type":
+    "double", "name": " Gross Profit to Sales", "required": true}, {"type": "double",
+    "name": " Net Income to Stockholder''s Equity", "required": true}, {"type": "double",
+    "name": " Liability to Equity", "required": true}, {"type": "double", "name":
+    " Degree of Financial Leverage (DFL)", "required": true}, {"type": "double", "name":
+    " Interest Coverage Ratio (Interest expense to EBIT)", "required": true}, {"type":
+    "double", "name": " Equity to Liability", "required": true}]'
+  outputs: '[{"type": "integer", "required": true}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2025-11-20 02:43:47.150074'

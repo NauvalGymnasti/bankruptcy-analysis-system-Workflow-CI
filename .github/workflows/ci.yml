@@ -1,0 +1,43 @@
+name: CI - Model Retraining
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  retrain:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: 🧩 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: 📦 Install dependencies
+        run: |
+          pip install mlflow==2.19.0 scikit-learn xgboost pandas numpy seaborn matplotlib
+
+      - name: 🧠 Verify MLflow version
+        run: mlflow --version
+
+      - name: 🚀 Run MLflow project (system environment)
+        working-directory: MLPROJECT
+        env:
+          MLFLOW_HOME: ${{ github.workspace }}/MLProject
+        run: |
+          echo "Starting model retraining..."
+          python modelling.py || { echo "🔥 Training failed"; cat mlflow.log; exit 1; }
+      - name: 📤 Upload trained model artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trained-model
+          path: MLPROJECT/mlruns

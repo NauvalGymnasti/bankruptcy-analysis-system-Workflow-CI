@@ -9,7 +9,7 @@ from xgboost import XGBClassifier
 import pandas as pd
 
 # --- 1. Load Data ---
-data_path = "data_celan.csv"
+data_path = "data_clean.csv"
 data = pd.read_csv(data_path)
 
 X = data.drop("Bankrupt?", axis=1)

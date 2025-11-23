@@ -1,14 +1,15 @@
 name: sml_env
 channels:
+  - defaults
   - conda-forge
-
 dependencies:
   - python=3.10
   - pip
   - pip:
-      - numpy
-      - pandas
+      - mlflow==2.19.0
       - scikit-learn
       - xgboost
-      - mlflow
+      - pandas
+      - numpy
+      - seaborn
       - matplotlib

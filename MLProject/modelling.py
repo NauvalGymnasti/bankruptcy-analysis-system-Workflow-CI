@@ -1,91 +1,100 @@
+# modelling_tuning.py
 import os
-import sys
-import warnings
-import pandas as pd
-import numpy as np
-from xgboost import XGBClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
-
 import mlflow
-import mlflow.xgboost
+import mlflow.sklearn
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from xgboost import XGBClassifier
+from Company_Bankruptcy_Prediction_data_preprocessing.preprocessing import load_and_preprocess_data
+import pandas as pd
 
+# --- 1. Load Data ---
+X_train, X_test, y_train, y_test = load_and_preprocess_data()
 
-def eval_metrics(actual, pred):
-    accuracy = accuracy_score(actual, pred)
-    return accuracy
+# --- 2. Konfigurasi MLflow ---
+mlflow.set_tracking_uri("http://127.0.0.1:5000") 
+mlflow.set_experiment("SMSML_XGBoost_Tuning")
 
+# --- 3. Grid Search Parameter ---
+param_grid = {
+    "learning_rate": [0.05, 0.1, 0.2],
+    "max_depth": [3, 5, 7],
+    "n_estimators": [100, 200, 300],
+    "subsample": [0.8, 1.0],
+}
 
-if __name__ == "__main__":
-    warnings.filterwarnings("ignore")
-    np.random.seed(42)
+# --- 4. Model dasar ---
+base_model = XGBClassifier(
+    objective='binary:logistic',
+    eval_metric='logloss',
+    use_label_encoder=False,
+    random_state=42
+)
 
-    # ============================
-    # Argumen dari MLproject
-    # ============================
-    # Format:
-    # sys.argv[1] = data_path
-    # sys.argv[2] = n_estimators
-    # sys.argv[3] = max_depth
-    # sys.argv[4] = learning_rate
-    # sys.argv[5] = subsample
-    # ============================
+# --- 5. Grid Search dengan Cross-Validation ---
+grid_search = GridSearchCV(
+    estimator=base_model,
+    param_grid=param_grid,
+    scoring='accuracy',
+    cv=3,
+    verbose=2,
+    n_jobs=-1
+)
 
-    data_path = sys.argv[1] if len(sys.argv) > 1 else "data_clean.csv"
+print("🚀 Starting Grid Search...")
+grid_search.fit(X_train, y_train)
 
-    n_estimators = int(sys.argv[2]) if len(sys.argv) > 2 else 200
-    max_depth = int(sys.argv[3]) if len(sys.argv) > 3 else 6
-    learning_rate = float(sys.argv[4]) if len(sys.argv) > 4 else 0.05
-    subsample = float(sys.argv[5]) if len(sys.argv) > 5 else 0.8
+# --- 6. Ambil hasil terbaik ---
+best_model = grid_search.best_estimator_
+best_params = grid_search.best_params_
+best_score = grid_search.best_score_
 
-    # ============================
-    # Load dataset
-    # ============================
-    data = pd.read_csv(data_path)
+print("\n🎯 Best Parameters:")
+print(best_params)
+print(f"CV Accuracy: {best_score:.4f}")
 
-    X = data.drop("Bankrupt?", axis=1)
-    y = data["Bankrupt?"]
+# --- 7. Evaluasi model terbaik pada test set ---
+y_pred = best_model.predict(X_test)
+test_acc = accuracy_score(y_test, y_pred)
+# Hindari autolog double
+mlflow.autolog(disable=True)
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
+print(f"Test Accuracy: {test_acc:.4f}")
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+with mlflow.start_run(run_name="XGBoost_GridSearchCV_Best"):
+    # Pastikan variabel benar
+    mlflow.log_params(best_params)
+    mlflow.log_metric("cv_accuracy", best_score)
+    mlflow.log_metric("test_accuracy", test_acc)
+
+    # Simpan artefak evaluasi
+    os.makedirs("results", exist_ok=True)
+    with open("results/classification_report.txt", "w") as f:
+        f.write(classification_report(y_test, y_pred))
+    with open("results/confusion_matrix.txt", "w") as f:
+        f.write(str(confusion_matrix(y_test, y_pred)))
+
+    mlflow.log_artifact("results/classification_report.txt")
+    mlflow.log_artifact("results/confusion_matrix.txt")
+
+    # Logging model ke MLflow
+    if isinstance(X_train, pd.DataFrame):
+        input_example = X_train.iloc[:1]
+    else:
+        input_example = pd.DataFrame(X_train[:1])
+
+    mlflow.xgboost.log_model(
+        xgb_model=best_model,
+        artifact_path="best_model_tuned",
+        input_example=input_example
     )
 
-    # ============================
-    # Mulai MLflow Run
-    # ============================
-    mlflow.xgboost.autolog(disable=True)
-
-    with mlflow.start_run():
-
-        params = {
-            "n_estimators": n_estimators,
-            "max_depth": max_depth,
-            "learning_rate": learning_rate,
-            "subsample": subsample,
-            "eval_metric": "logloss",
-        }
-
-        # Log parameter manual (sesuai instruksi kriteria 3)
-        mlflow.log_params(params)
-
-        # Train model
-        model = XGBClassifier(**params)
-        model.fit(X_train, y_train)
-
-        # Predict
-        y_pred = model.predict(X_test)
-
-        # Evaluate
-        accuracy = eval_metrics(y_test, y_pred)
-        mlflow.log_metric("accuracy", accuracy)
-
-        # Log model XGBoost
-        mlflow.xgboost.log_model(
-            booster=model.get_booster(),
-            artifact_path="model"
-        )
-
-        print("===================================")
-        print("XGBoost model trained successfully!")
-        print(f"Accuracy: {accuracy}")
-        print("===================================")
+    # Simpan model lokal
+    os.makedirs("model", exist_ok=True)
+    # pastikan best_model adalah estimator murni, bukan GridSearchCV object
+    if hasattr(best_model, "save_model"):
+        best_model.save_model("model/xgb_best_model_tuned.json")
+    elif hasattr(best_model, "best_estimator_"):
+        best_model.best_estimator_.save_model("model/xgb_best_model_tuned.json")
+print("\n✅ Model tuned telah disimpan dan dilog ke MLflow.")

@@ -7,7 +7,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from xgboost import XGBClassifier
 
-def run_model(data_path: str, target_column: str):
+
+def run_model(data_path: str, target_column: str,
+              n_estimators: int, max_depth: int,
+              learning_rate: float, subsample: float):
+
     # ===============================
     # Load dataset (SUDAH BERSIH)
     # ===============================
@@ -35,33 +39,30 @@ def run_model(data_path: str, target_column: str):
     # Train model
     # ===============================
     model = XGBClassifier(
-        n_estimators=args.n_estimators,
-        max_depth=args.max_depth,
-        learning_rate=args.learning_rate,
-        subsample=args.subsample,
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        learning_rate=learning_rate,
+        subsample=subsample,
         objective="binary:logistic",
         eval_metric="logloss"
     )
 
-    # Mulai run MLflow
+    # ===============================
+    # MLflow run
+    # ===============================
     with mlflow.start_run(run_name="XGB_Training"):
 
         model.fit(X_train, y_train)
 
-        # ===============================
-        # Evaluate
-        # ===============================
         preds = model.predict(X_test)
         rmse = np.sqrt(mean_squared_error(y_test, preds))
         print("RMSE:", rmse)
 
-        # ===============================
-        # Log MLflow 
-        # ===============================
-        mlflow.log_param("n_estimators", args.n_estimators)
-        mlflow.log_param("max_depth", args.max_depth)
-        mlflow.log_param("learning_rate", args.learning_rate)
-        mlflow.log_param("subsample", args.subsample)
+        # Log MLflow
+        mlflow.log_param("n_estimators", n_estimators)
+        mlflow.log_param("max_depth", max_depth)
+        mlflow.log_param("learning_rate", learning_rate)
+        mlflow.log_param("subsample", subsample)
 
         mlflow.log_metric("rmse", rmse)
 
@@ -69,14 +70,25 @@ def run_model(data_path: str, target_column: str):
 
         print("Model berhasil dilog ke MLflow")
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+
     parser.add_argument("--data_path", type=str, required=True)
     parser.add_argument("--n_estimators", type=int, default=200)
     parser.add_argument("--max_depth", type=int, default=6)
     parser.add_argument("--learning_rate", type=float, default=0.05)
     parser.add_argument("--subsample", type=float, default=0.8)
+
     args = parser.parse_args()
 
     target_column = "Bankrupt?"
-    run_model(args.data_path, target_column)
+
+    run_model(
+        data_path=args.data_path,
+        target_column=target_column,
+        n_estimators=args.n_estimators,
+        max_depth=args.max_depth,
+        learning_rate=args.learning_rate,
+        subsample=args.subsample
+    )

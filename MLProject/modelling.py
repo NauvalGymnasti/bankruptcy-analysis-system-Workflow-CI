@@ -6,6 +6,7 @@ import mlflow.sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
+from xgboost import XGBClassifier
 
 def run_model(data_path: str, target_column: str):
     # =====================================================================
@@ -38,10 +39,13 @@ def run_model(data_path: str, target_column: str):
     # =====================================================================
     # Train model
     # =====================================================================
-    model = RandomForestRegressor(
-        n_estimators=200,
-        max_depth=10,
-        random_state=42
+    model = XGBClassifier(
+        n_estimators=args.n_estimators,
+        max_depth=args.max_depth,
+        learning_rate=args.learning_rate,
+        subsample=args.subsample,
+        objective="binary:logistic",
+        eval_metric="logloss"
     )
     model.fit(X_train, y_train)
 
@@ -66,6 +70,10 @@ def run_model(data_path: str, target_column: str):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_path", type=str, required=True)
+    parser.add_argument("--n_estimators", type=int, default=200)
+    parser.add_argument("--max_depth", type=int, default=6)
+    parser.add_argument("--learning_rate", type=float, default=0.05)
+    parser.add_argument("--subsample", type=float, default=0.8)
 
     args = parser.parse_args()
     run_model(args.data_path, args.target_column)

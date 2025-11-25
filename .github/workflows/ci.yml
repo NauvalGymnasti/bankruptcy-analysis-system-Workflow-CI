@@ -26,7 +26,7 @@ jobs:
       - name: 🧠 Verify MLflow version
         run: mlflow --version
 
-      - name: 🚀 Run MLflow Project (NO conda activate!)
+      - name: 🚀 Run MLflow Project
         working-directory: MLProject
         run: |
           echo "Running MLflow Project with parameters..."

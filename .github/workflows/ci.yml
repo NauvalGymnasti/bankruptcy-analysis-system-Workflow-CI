@@ -1,38 +1,59 @@
-name: MLflow CI Training
+name: CI
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+
+env:
+  CSV_URL: "MLproject/data_train.csv"
 
 jobs:
-  train-model:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Conda
-      uses: conda-incubator/setup-miniconda@v2
-      with:
-        auto-update-conda: true
-        environment-file: MLProject/conda.yaml
-        activate-environment: ml_ci_env
-        channels: conda-forge,defaults
+      - name: Set up Python 3.12.7
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12.7"
 
-    - name: Install MLflow
-      run: pip install mlflow
+      - name: Check Env
+        run: |
+          echo "CSV_URL=$CSV_URL"
 
-    - name: Run MLflow Project
-      run: |
-        cd MLProject
-        conda activate ml_ci_env
-        mlflow run .
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mlflow xgboost scikit-learn pandas numpy
 
-    - name: Upload model artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: trained-model
-        path: MLProject/mlruns
+      - name: Run mlflow project
+        run: |
+          mlflow run MLproject --env-manager=local -P dataset="$CSV_URL"
+
+      - name: Configure Git (for pushing mlruns back to repo)
+        env:
+          GIT_EMAIL: ${{ secrets.EMAIL }}
+          GIT_NAME: ${{ secrets.NAME }}
+        run: |
+          git config --global user.email "$GIT_EMAIL"
+          git config --global user.name "$GIT_NAME"
+
+      - name: Save mlruns to repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # ensure mlruns exists
+          if [ -d "mlruns" ]; then
+            git add -f mlruns || true
+            git commit -m "Save mlruns from CI run" || true
+            git push origin HEAD:main || true
+          else
+            echo "No mlruns folder produced"
+          fi

@@ -1,10 +1,11 @@
-name: ml_ci_project
+name: latihan-cs-mlflow
 
-use_conda: false
+conda_env: conda.yaml
 
 entry_points:
   main:
     parameters:
-      data_path: {type: str, default: "data_clean.csv"}
-    command: >
-      python modelling.py --data_path {data_path}
+      n_estimators: {type: int, default: 505}
+      max_depth: {type: int, default: 35}
+      dataset : {type: string, default: "data_train.csv"}
+    command: "python modelling.py {n_estimators} {max_depth} {dataset}"

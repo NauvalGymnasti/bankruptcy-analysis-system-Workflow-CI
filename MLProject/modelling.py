@@ -65,7 +65,7 @@ print(f"CV Accuracy: {best_score:.4f}")
 # --- 7. Evaluasi model terbaik pada test set ---
 y_pred = best_model.predict(X_test)
 test_acc = accuracy_score(y_test, y_pred)
-# Hindari autolog double
+
 mlflow.autolog(disable=True)
 
 print(f"Test Accuracy: {test_acc:.4f}")

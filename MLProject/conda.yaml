@@ -1,15 +1,15 @@
-name: sml_env
+name: ihsg-mlflow-env
 channels:
   - defaults
   - conda-forge
+
 dependencies:
   - python=3.10
   - pip
+  - numpy
+  - pandas
+  - scikit-learn
+  - mlflow
+
   - pip:
-      - mlflow==2.19.0
-      - scikit-learn
       - xgboost
-      - pandas
-      - numpy
-      - seaborn
-      - matplotlib

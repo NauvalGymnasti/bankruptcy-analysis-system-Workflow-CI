@@ -1,47 +1,43 @@
-name: CI - Model Retraining
+name: MLflow CI
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
+  pull_request:
 
 jobs:
-  retrain:
+  mlflow-run:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🧩 Checkout repository
-        uses: actions/checkout@v4
+      # Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: 🐍 Setup Python
-        uses: actions/setup-python@v5
+      # Install micromamba (pengganti conda)
+      - name: Set up micromamba
+        uses: mamba-org/setup-micromamba@v1
         with:
-          python-version: "3.10"
+          environment-file: conda.yaml
+          cache-environment: true
+          cache-downloads: true
 
-      - name: 📦 Install dependencies (NO CONDA!)
+      # Install MLflow (kadang tidak ikut masuk env)
+      - name: Ensure MLflow Installed
         run: |
-          pip install --upgrade pip
-          pip install mlflow==2.19.0 scikit-learn xgboost pandas numpy seaborn matplotlib
+          micromamba install -y -n ihsg-mlflow-env mlflow
+        shell: bash
 
-      - name: 🧠 Verify MLflow version
-        run: mlflow --version
-
-      - name: 🚀 Run MLflow Project
-        working-directory: MLProject
+      # Debug environment
+      - name: Check Python & MLflow
         run: |
-          echo "Running MLflow Project with parameters..."
-          mlflow run . \
-            --env-manager=local \
-            -P data_path=data_clean.csv \
-            -P n_estimators=200 \
-            -P max_depth=6 \
-            -P learning_rate=0.05 \
-            -P subsample=0.8 \
-            || { echo '🔥 MLflow run failed'; exit 1; }
+          micromamba run -n ihsg-mlflow-env python --version
+          micromamba run -n ihsg-mlflow-env mlflow --version
+        shell: bash
 
-      - name: 📤 Upload trained model artifact
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: trained-model
-          path: MLProject/mlruns
+      # Jalankan MLflow Project
+      - name: Run MLflow Project
+        run: |
+          echo "Running MLflow Project..."
+          micromamba run -n ihsg-mlflow-env mlflow run . -P data_path=data_clean.csv
+        shell: bash

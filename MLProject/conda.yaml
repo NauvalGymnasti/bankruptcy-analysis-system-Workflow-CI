@@ -1,15 +1,11 @@
-name: ihsg-mlflow-env
+name: ml_ci_env
 channels:
   - defaults
-  - conda-forge
-
 dependencies:
   - python=3.10
   - pip
-  - numpy
-  - pandas
-  - scikit-learn
-  - mlflow
-
   - pip:
-      - xgboost
+      - mlflow
+      - scikit-learn
+      - pandas
+      - numpy

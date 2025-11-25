@@ -1,19 +1,9 @@
-name: bankruptcy-xgboost
+name: ml_ci_project
 
 conda_env: conda.yaml
 
 entry_points:
   main:
     parameters:
-      data_path: {type: str, default: "data_clean.csv"}
-      n_estimators: {type: int, default: 200}
-      max_depth: {type: int, default: 6}
-      learning_rate: {type: float, default: 0.05}
-      subsample: {type: float, default: 0.8}
-    command: >
-      python modelling.py
-      --data_path {data_path}
-      --n_estimators {n_estimators}
-      --max_depth {max_depth}
-      --learning_rate {learning_rate}
-      --subsample {subsample}
+      data_path: {type: str, default: "dataset_preprocessing"}
+    command: "python modelling.py --data_path {data_path}"

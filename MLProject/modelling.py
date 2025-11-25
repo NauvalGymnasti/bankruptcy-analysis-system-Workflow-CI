@@ -1,94 +1,52 @@
-import pandas as pd
-import numpy as np
 import argparse
+import pandas as pd
 import mlflow
-import mlflow.sklearn
+import mlflow.xgboost
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
-from xgboost import XGBClassifier
+from xgboost import XGBRegressor
 
+def load_data(path):
+    return pd.read_csv(path)
 
-def run_model(data_path: str, target_column: str,
-              n_estimators: int, max_depth: int,
-              learning_rate: float, subsample: float):
+def train_model(df):
+    X = df.iloc[:, :-1]   # semua kolom kecuali target
+    y = df.iloc[:, -1]    # kolom terakhir sbg target
 
-    # ===============================
-    # Load dataset (SUDAH BERSIH)
-    # ===============================
-    df = pd.read_csv(data_path)
-
-    if target_column not in df.columns:
-        raise ValueError(f"Target '{target_column}' tidak ditemukan. Kolom tersedia: {df.columns.tolist()}")
-
-    # ===============================
-    # Features & Target
-    # ===============================
-    X = df.drop(columns=[target_column])
-    y = df[target_column]
-
-    X = X.apply(pd.to_numeric, errors='coerce').fillna(0)
-
-    # ===============================
-    # Train-test split
-    # ===============================
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42
     )
 
-    # ===============================
-    # Train model
-    # ===============================
-    model = XGBClassifier(
-        n_estimators=n_estimators,
-        max_depth=max_depth,
-        learning_rate=learning_rate,
-        subsample=subsample,
-        objective="binary:logistic",
-        eval_metric="logloss"
+    model = XGBRegressor(
+        n_estimators=300,
+        learning_rate=0.05,
+        max_depth=6,
+        subsample=0.8,
+        colsample_bytree=0.8,
+        random_state=42
     )
 
-    # ===============================
-    # MLflow run
-    # ===============================
-    with mlflow.start_run(run_name="XGB_Training"):
+    model.fit(X_train, y_train)
+    score = model.score(X_test, y_test)
 
-        model.fit(X_train, y_train)
-
-        preds = model.predict(X_test)
-        rmse = np.sqrt(mean_squared_error(y_test, preds))
-        print("RMSE:", rmse)
-
-        # Log MLflow
-        mlflow.log_param("n_estimators", n_estimators)
-        mlflow.log_param("max_depth", max_depth)
-        mlflow.log_param("learning_rate", learning_rate)
-        mlflow.log_param("subsample", subsample)
-
-        mlflow.log_metric("rmse", rmse)
-
-        mlflow.sklearn.log_model(model, artifact_path="model")
-
-        print("Model berhasil dilog ke MLflow")
-
+    print("Model Score (R2):", score)
+    return model, score
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-
-    parser.add_argument("--data_path", type=str, required=True)
-    parser.add_argument("--n_estimators", type=int, default=200)
-    parser.add_argument("--max_depth", type=int, default=6)
-    parser.add_argument("--learning_rate", type=float, default=0.05)
-    parser.add_argument("--subsample", type=float, default=0.8)
-
+    parser.add_argument("--data_path", type=str)
     args = parser.parse_args()
 
-    target_column = "Bankrupt?"
+    mlflow.set_tracking_uri("file:./mlruns")
 
-    run_model(
-        data_path=args.data_path,
-        target_column=target_column,
-        n_estimators=args.n_estimators,
-        max_depth=args.max_depth,
-        learning_rate=args.learning_rate,
-        subsample=args.subsample
-    )
+    with mlflow.start_run():
+        # Load data
+        df = load_data(args.data_path)
+
+        # Train
+        model, r2 = train_model(df)
+
+        # Log metric
+        mlflow.log_metric("r2_score", r2)
+
+        # Log model
+        mlflow.xgboost.log_model(model, "model")

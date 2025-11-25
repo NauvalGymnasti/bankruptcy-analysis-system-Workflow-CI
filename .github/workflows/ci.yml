@@ -28,6 +28,12 @@ jobs:
           python-version: "3.10"
           activate-environment: sml_env
           environment-file: MLProject/conda.yaml
+      
+      - name: Install mlflow in conda env
+        shell: bash -l {0}
+        run: |
+          conda activate sml_env
+          pip install mlflow==2.19.0
 
       - name: 📦 Install dependencies
         run: |
@@ -40,7 +46,8 @@ jobs:
         working-directory: MLProject
         run: |
           echo "Running MLflow Project with parameters..."
-          python -m mlflow run . --no-conda \
+          conda activate sml_env
+          mlflow run . \
             -P data_path=data_clean.csv \
             -P n_estimators=200 \
             -P max_depth=6 \

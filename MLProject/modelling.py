@@ -66,7 +66,6 @@ def run_model(data_path: str, target_column: str):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_path", type=str, required=True)
-    parser.add_argument("--target_column", type=str, required=True)
 
     args = parser.parse_args()
     run_model(args.data_path, args.target_column)

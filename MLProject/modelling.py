@@ -6,11 +6,17 @@ import mlflow.sklearn
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from xgboost import XGBClassifier
+import argparse
+
 
 # ---------------------------
 # 1. Load Dataset
 # ---------------------------
-data = pd.read_csv("data_clean.csv")
+parser = argparse.ArgumentParser()
+parser.add_argument("--dataset", type=str, required=True)
+args = parser.parse_args()
+
+data = pd.read_csv(args.dataset)
 
 X = data.drop("Bankrupt?", axis=1)
 y = data["Bankrupt?"]

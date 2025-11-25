@@ -26,7 +26,7 @@ jobs:
         with:
           auto-update-conda: true
           python-version: "3.10"
-          activate-environment: mlflow-env
+          activate-environment: sml_env
           environment-file: MLProject/conda.yaml
 
       - name: 📦 Install dependencies

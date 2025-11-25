@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  CSV_URL: "data_train.csv"
+  CSV_URL: "data_clean.csv"
 
 jobs:
   build:

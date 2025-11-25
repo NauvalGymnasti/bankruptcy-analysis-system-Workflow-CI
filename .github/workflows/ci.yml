@@ -35,7 +35,7 @@ jobs:
 
       - name: Run mlflow project
         run: |
-          mlflow run MLproject --env-manager=local -P dataset="$CSV_URL"
+          mlflow run MLProject --env-manager=local -P dataset="$CSV_URL"
 
       - name: Configure Git (for pushing mlruns back to repo)
         env:

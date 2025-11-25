@@ -8,38 +8,42 @@ on:
 jobs:
   retrain:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
 
     steps:
-      - name: 🧩 Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: 🐍 Setup Python
-        uses: actions/setup-python@v5
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v3
         with:
+          auto-update-conda: true
           python-version: "3.10"
+          activate-environment: sml_env
+          environment-file: MLProject/conda.yaml
+          use-mamba: true
 
-      - name: 📦 Install dependencies
+      - name: Install mlflow (ensure inside conda env)
+        shell: bash -l {0}
         run: |
-          pip install --upgrade pip
+          conda activate sml_env
           pip install mlflow==2.19.0
-          pip install scikit-learn xgboost pandas numpy seaborn matplotlib
 
-      - name: 🧠 Verify MLflow version
-        run: mlflow --version
-
-      - name: 🚀 Run MLflow Project (tanpa conda)
-        working-directory: MLProject
+      - name: Verify environment
+        shell: bash -l {0}
         run: |
-          echo "Running MLflow Project with parameters..."
-          mlflow run . -P data_path=data_clean.csv -P n_estimators=200 -P max_depth=6 -P learning_rate=0.05 -P subsample=0.8
-            || { echo '🔥 MLflow run failed'; exit 1; }
+          conda activate sml_env
+          python --version
+          mlflow --version
 
-      - name: 📤 Upload trained model artifact
-        if: success()
+      - name: Run MLflow Project
+        working-directory: MLProject
+        shell: bash -l {0}
+        run: |
+          conda activate sml_env
+          mlflow run .
+
+      - name: Upload mlruns
         uses: actions/upload-artifact@v4
         with:
-          name: trained-model
+          name: mlruns
           path: MLProject/mlruns

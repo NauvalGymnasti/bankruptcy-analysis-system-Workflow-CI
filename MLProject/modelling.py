@@ -16,7 +16,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--data_path", type=str, required=True)
 args = parser.parse_args()
 
-data = pd.read_csv(args.dataset)
+data = pd.read_csv(args.data_path)
 
 X = data.drop("Bankrupt?", axis=1)
 y = data["Bankrupt?"]

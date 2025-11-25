@@ -10,34 +10,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repo
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      # -----------------------
+      # 1. Checkout Repository
+      # -----------------------
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      # Install micromamba (pengganti conda)
-      - name: Set up micromamba
-        uses: mamba-org/setup-micromamba@v1
+      # -----------------------
+      # 2. Install Miniconda
+      # -----------------------
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v3
         with:
+          auto-update-conda: true
+          python-version: "3.10"
+          activate-environment: mlflow-env
           environment-file: conda.yaml
-          cache-environment: true
-          cache-downloads: true
+          use-mamba: true
 
-      # Install MLflow (kadang tidak ikut masuk env)
-      - name: Ensure MLflow Installed
+      # -----------------------
+      # 3. Verify Conda
+      # -----------------------
+      - name: Check Conda
+        shell: bash -l {0}
         run: |
-          micromamba install -y -n ihsg-mlflow-env mlflow
-        shell: bash
+          conda info
+          conda list
 
-      # Debug environment
-      - name: Check Python & MLflow
-        run: |
-          micromamba run -n ihsg-mlflow-env python --version
-          micromamba run -n ihsg-mlflow-env mlflow --version
-        shell: bash
-
-      # Jalankan MLflow Project
+      # -----------------------
+      # 4. Run MLflow Project
+      # -----------------------
       - name: Run MLflow Project
+        shell: bash -l {0}
         run: |
-          echo "Running MLflow Project..."
-          micromamba run -n ihsg-mlflow-env mlflow run . -P data_path=data_clean.csv
-        shell: bash
+          echo "Running MLflow..."
+          mlflow run . -P data_path=data_clean.csv
+
+      # -----------------------
+      # 5. Upload MLflow Artifacts
+      # -----------------------
+      - name: Upload MLflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlruns
+          path: mlruns

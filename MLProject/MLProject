@@ -6,4 +6,9 @@ entry_points:
   main:
     parameters:
       data_path: {type: str, default: "data_clean.csv"}
-    command: "python modelling.py --data_path {data_path}"
+    command: >
+      bash -c "
+        source $(conda info --base)/etc/profile.d/conda.sh &&
+        conda activate ml_ci_env &&
+        python modelling.py --data_path {data_path}
+      "

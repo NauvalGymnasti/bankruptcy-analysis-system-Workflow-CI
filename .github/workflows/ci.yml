@@ -40,7 +40,7 @@ jobs:
         working-directory: MLProject
         run: |
           echo "Running MLflow Project with parameters..."
-          mlflow run . \
+          mlflow run . --no-conda \
             -P data_path=data_clean.csv \
             -P n_estimators=200 \
             -P max_depth=6 \

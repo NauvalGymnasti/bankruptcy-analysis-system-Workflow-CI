@@ -76,4 +76,4 @@ if __name__ == "__main__":
 
     target_column= "Bankrupt?"
     args = parser.parse_args()
-    run_model(args.data_path, args.target_column)
+    run_model(args.data_path, target_column)

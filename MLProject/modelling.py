@@ -14,6 +14,10 @@ import argparse
 # ---------------------------
 parser = argparse.ArgumentParser()
 parser.add_argument("--data_path", type=str, required=True)
+parser.add_argument("--n_estimators", type=int, required=True)
+parser.add_argument("--max_depth", type=int, required=True)
+parser.add_argument("--learning_rate", type=float, required=True)
+parser.add_argument("--subsample", type=float, required=True)
 args = parser.parse_args()
 
 data = pd.read_csv(args.data_path)
@@ -85,7 +89,7 @@ print("\nClassification Report:\n", classification_report(y_test, y_pred))
 if mlflow.active_run():
     mlflow.end_run()
 
-with mlflow.start_run(run_name="XGBoost_GridSearch_Best") as run:
+with mlflow.start_run(run_name="XGBoost_GridSearch_Best", nested=True) as run:
 
     # Log params & metrics
     mlflow.log_params(best_params)

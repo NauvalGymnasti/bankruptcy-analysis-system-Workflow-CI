@@ -20,34 +20,23 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-      
-      - name: 🐍 Install Miniconda
-        uses: conda-incubator/setup-miniconda@v3
-        with:
-          auto-update-conda: true
-          python-version: "3.10"
-          activate-environment: sml_env
-          environment-file: MLProject/conda.yaml
-      
-      - name: Install mlflow in conda env
-        shell: bash -l {0}
-        run: |
-          conda activate sml_env
-          pip install mlflow==2.19.0
 
       - name: 📦 Install dependencies
         run: |
-          pip install mlflow==2.19.0 scikit-learn xgboost pandas numpy seaborn matplotlib
+          pip install --upgrade pip
+          pip install mlflow==2.19.0
+          pip install scikit-learn xgboost pandas numpy seaborn matplotlib
 
       - name: 🧠 Verify MLflow version
         run: mlflow --version
 
-      - name: 🚀 Run MLflow Project
+      - name: 🚀 Run MLflow Project (tanpa conda)
         working-directory: MLProject
         run: |
           echo "Running MLflow Project with parameters..."
-          conda activate sml_env
+          
           mlflow run . \
+            --env-manager=local \
             -P data_path=data_clean.csv \
             -P n_estimators=200 \
             -P max_depth=6 \

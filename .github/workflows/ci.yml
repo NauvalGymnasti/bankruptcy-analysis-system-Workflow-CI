@@ -44,7 +44,7 @@ jobs:
         shell: bash -l {0}
         run: |
           echo "Running MLflow..."
-          mlflow run . -P data_path=data_clean.csv
+          mlflow run . -P data_path=MLProject/data_clean.csv
 
       # -----------------------
       # 5. Upload MLflow Artifacts

@@ -1,56 +1,47 @@
-name: MLflow CI
+name: CI - Model Retraining
 
 on:
   push:
     branches: [ main ]
-  pull_request:
+  workflow_dispatch:
 
 jobs:
-  mlflow-run:
+  retrain:
     runs-on: ubuntu-latest
 
     steps:
-      # -----------------------
-      # 1. Checkout Repository
-      # -----------------------
-      - name: Checkout code
+      - name: 🧩 Checkout repository
         uses: actions/checkout@v4
 
-      # -----------------------
-      # 2. Install Miniconda
-      # -----------------------
-      - name: Setup Miniconda
+      - name: 🐍 Setup Conda
         uses: conda-incubator/setup-miniconda@v3
         with:
-          auto-update-conda: true
-          python-version: "3.10"
           activate-environment: mlflow-env
           environment-file: MLProject/conda.yaml
-          use-mamba: true
+          auto-update-conda: true
 
-      # -----------------------
-      # 3. Verify Conda
-      # -----------------------
-      - name: Check Conda
+      - name: 📦 Install additional dependencies
         shell: bash -l {0}
         run: |
-          conda info
-          conda list
+          conda activate mlflow-env
+          pip install mlflow==2.19.0
 
-      # -----------------------
-      # 4. Run MLflow Project
-      # -----------------------
-      - name: Run MLflow Project
+      - name: 🚀 Run MLflow Project
         shell: bash -l {0}
         run: |
-          echo "Running MLflow..."
-          mlflow run . -P data_path=MLProject/data_clean.csv
+          conda activate mlflow-env
+          echo "Running MLflow inside MLProject folder..."
+          mlflow run MLProject \
+            -P data_path=data_clean.csv \
+            -P n_estimators=200 \
+            -P max_depth=6 \
+            -P learning_rate=0.05 \
+            -P subsample=0.8 \
+          || { echo '🔥 MLflow run failed'; exit 1; }
 
-      # -----------------------
-      # 5. Upload MLflow Artifacts
-      # -----------------------
-      - name: Upload MLflow artifacts
+      - name: 📤 Upload trained model artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: mlruns
-          path: mlruns
+          name: trained-model
+          path: MLProject/mlruns

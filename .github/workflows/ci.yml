@@ -28,13 +28,18 @@ jobs:
       - name: 🧠 Verify MLflow version
         run: mlflow --version
 
-      - name: 🚀 Run MLflow project (system environment)
+      - name: 🚀 Run MLflow Project
         working-directory: MLProject
-        env:
-          MLFLOW_HOME: ${{ github.workspace }}/MLProject
         run: |
-          echo "Starting model retraining..."
-          python modelling.py || { echo "🔥 Training failed"; cat mlflow.log; exit 1; }
+          echo "Running MLflow Project with parameters..."
+          mlflow run . \
+            -P data_path=data_clean.csv \
+            -P n_estimators=200 \
+            -P max_depth=6 \
+            -P learning_rate=0.05 \
+            -P subsample=0.8 \
+            || { echo '🔥 MLflow run failed'; exit 1; }
+
       - name: 📤 Upload trained model artifact
         if: success()
         uses: actions/upload-artifact@v4

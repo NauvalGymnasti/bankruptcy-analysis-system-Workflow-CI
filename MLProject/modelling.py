@@ -12,6 +12,7 @@ def run_model(data_path: str, target_column: str):
     # Load dataset (SUDAH BERSIH)
     # =====================================================================
     df = pd.read_csv(data_path)
+    target_column= "Bankrupt?"
 
     # Pastikan kolom target ada
     if target_column not in df.columns:

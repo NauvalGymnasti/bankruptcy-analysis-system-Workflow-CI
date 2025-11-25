@@ -13,7 +13,7 @@ import argparse
 # 1. Load Dataset
 # ---------------------------
 parser = argparse.ArgumentParser()
-parser.add_argument("--dataset", type=str, required=True)
+parser.add_argument("--datapath", type=str, required=True)
 args = parser.parse_args()
 
 data = pd.read_csv(args.dataset)
